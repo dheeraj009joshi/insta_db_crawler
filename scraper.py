@@ -55,23 +55,21 @@ class Scraper:
                         "playCount": media.get("play_count", 0),
                         "comment_count": media.get("comment_count", 0),
                     }
-
+                 
                     results.append(data)
                     results_total.append(data)
 
                     # print(f"[•] Collected reel: {data['post_id']} - ...")
-
-                # # Send data to helper for processing
-                # get_scraper_data(results, self)
-                # print(f"[→] Batch processed. Total so far: {len(results_total)}")
+                print(results[-1].get("post_id", ""))
+                # Send data to helper for processing
+                get_scraper_data(results, self)
+                print(f"[→] Batch processed. Total so far: {len(results_total)}")
 
                 # Handle pagination
-                if res.get("has_more"):
-                    print("has max id ", res.get("reels_max_id", ""))
-                    reels_max_id = res.get("reels_max_id", "")
-                else:
-                    print("[✓] No more pages available.")
-                    break
+               
+                print("has max id ", res.get("reels_max_id", ""))
+                reels_max_id = res.get("reels_max_id", "")
+              
 
 
             except Exception as e:
@@ -80,5 +78,5 @@ class Scraper:
 
         return results_total[:count]
 
-aa=Scraper(token=token)
-aa.scrape_top_reels_with_keyword(query="sleep better", count=20000)
+# aa=Scraper(token=token)
+# aa.scrape_top_reels_with_keyword(query="sleep better", count=20000)
