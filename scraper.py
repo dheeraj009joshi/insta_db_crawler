@@ -70,7 +70,7 @@ class Scraper:
                     reels_max_id = res.get("reels_max_id", "")
                 else:
                     print("[✓] No more pages available.")
-                    break
+
 
             # except Exception as e:
             #     print(f"[!] Error during scraping loop: {e}")
