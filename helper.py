@@ -69,38 +69,46 @@ def get_scraper_data(posts, scraper):
     whisper_manager = WhisperManager()
     augmented_posts = []
     ss=scraper.scrape_post_comments
-    def process_post(post, idx):
+
+    def transcribe_video(video_path):
+        model = whisper.load_model("base")  # You can cache/load outside this func for speed
+        return model.transcribe(video_path)["text"]
+
+    def fetch_comments(scraper, post_id):
+        return scraper.scrape_post_comments(post_id, 100)
+    def process_post(post, scraper):
         try:
-            filename = f"{post['post_id']}.mp4"
-            video_file = download_tiktok_video(post["videoUrl"], filename)
+            post_id = post["post_id"]
+            filename = f"{post_id}.mp4"
+            video_path = download_tiktok_video(post["videoUrl"], filename)
 
-            if not video_file:
-                print(f"[!] Skipping {post['post_id']} due to failed download.")
-                return post
+            if not video_path:
+                print(f"[!] Failed to download video: {post_id}")
+                return None
 
-            # Inner tasks: transcription and comment fetching
-    
-            print(f"[→] Transcribing {filename}")
-            _, transcript = whisper_manager.transcribe(idx, video_file)
+            # Run transcription and comments in parallel
+            with ThreadPoolExecutor(max_workers=2) as executor:
+                transcribe_future = executor.submit(transcribe_video, video_path)
+                comment_future = executor.submit(fetch_comments, scraper, post_id)
+
+                transcript = transcribe_future.result()
+                comments = comment_future.result()
+
             post["transcript"] = transcript
+            post["comments"] = comments
+            post["_id"] = str(post_id)
 
-            print(f"[→] Fetching comments for {post['post_id']}")
-            post["comments"] = ss(post["post_id"], 100)
+            print(f"[✓] Finished: {post_id}")
+            return post
 
-         
-            post["comments"] = ss(post["post_id"], 100)
+        except Exception as e:
+            print(f"[!] Error processing post {post_id}: {e}")
+            return None
 
-            print(f"[✓] Done processing post {post['post_id']}")
-        except Exception as error:
-            print(f"[!] Error processing post {post['post_id']}: {error}")
         finally:
             if os.path.exists(filename):
-                try:
-                    os.remove(filename)
-                    print(f"[x] Deleted temp file: {filename}")
-                except:
-                    print(f"[!] Could not delete file: {filename}")
-        return post
+                os.remove(filename)
+        
 
     try:
         with ThreadPoolExecutor(max_workers=5) as executor:
