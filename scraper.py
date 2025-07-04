@@ -27,7 +27,7 @@ class Scraper:
         results_total = []
 
         while len(results_total) < count:
-            # try:
+            try:
                 res = self.cl.fbsearch_reels_v2(query=query, reels_max_id=reels_max_id)
                 print(f"[✓] API fetched batch with {len(res.get('reels_serp_modules', [{}])[0].get('clips', []))} items")
 
@@ -61,20 +61,24 @@ class Scraper:
 
                     print(f"[•] Collected reel: {data['post_id']} - {data['description'][:30]}...")
 
-                # Send data to helper for processing
-                get_scraper_data(results, self)
-                print(f"[→] Batch processed. Total so far: {len(results_total)}")
+                # # Send data to helper for processing
+                # get_scraper_data(results, self)
+                # print(f"[→] Batch processed. Total so far: {len(results_total)}")
 
                 # Handle pagination
                 if res.get("has_more"):
+                    print("has max id ", res.get("reels_max_id", ""))
                     reels_max_id = res.get("reels_max_id", "")
                 else:
                     print("[✓] No more pages available.")
+                    break
 
 
-            # except Exception as e:
-            #     print(f"[!] Error during scraping loop: {e}")
-            #     pass
+            except Exception as e:
+                print(f"[!] Error during scraping loop: {e}")
+                pass
 
         return results_total[:count]
 
+aa=Scraper(token=token)
+aa.scrape_top_reels_with_keyword(query="sleep better", count=20000)
