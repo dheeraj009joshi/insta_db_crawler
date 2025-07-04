@@ -59,7 +59,7 @@ class Scraper:
                     results.append(data)
                     results_total.append(data)
 
-                    print(f"[•] Collected reel: {data['post_id']} - {data['description'][:30]}...")
+                    # print(f"[•] Collected reel: {data['post_id']} - ...")
 
                 # # Send data to helper for processing
                 # get_scraper_data(results, self)
