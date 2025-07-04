@@ -75,7 +75,7 @@ def get_scraper_data(posts, scraper):
         return model.transcribe(video_path)["text"]
 
     def fetch_comments(scraper, post_id):
-        return scraper.scrape_post_comments(post_id, 100)
+        return ss(post_id, 100)
     def process_post(post, scraper):
         try:
             post_id = post["post_id"]
