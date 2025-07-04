@@ -78,25 +78,3 @@ class Scraper:
 
         return results_total[:count]
 
-
-# # === Simple CLI Test ===
-# if __name__ == "__main__":
-#     scraper = Scraper(token)
-    
-#     # Test comment scraping (independent)
-#     try:
-#         print("[*] Fetching test comments...")
-#         comments = scraper.scrape_post_comments("3580475282958233951", 100)
-#         with open("comments.json", "w") as f:
-#             json.dump(comments, f, indent=4)
-#         print(f"[✓] Saved {len(comments)} comments to comments.json")
-#     except Exception as e:
-#         print(f"[!] Comment test failed: {e}")
-
-#     # Test reel scraping
-#     try:
-#         print("[*] Fetching top reels...")
-#         results = scraper.scrape_top_reels_with_keyword("sleep better", 10)
-#         print(f"[✓] Done. Total reels fetched: {len(results)}")
-#     except Exception as e:
-#         print(f"[!] Reel scraping failed: {e}")
