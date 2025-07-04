@@ -111,7 +111,7 @@ def get_scraper_data(posts, scraper):
         
 
     try:
-        with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=10) as executor:
             futures = [executor.submit(process_post, post, idx) for idx, post in enumerate(posts)]
 
             for future in as_completed(futures):
