@@ -79,17 +79,15 @@ def get_scraper_data(posts, scraper):
             if not video_file:
                 print(f"[!] Skipping {post['post_id']} due to failed download.")
                 return post
-
+            if post["type"]==2:
             # Inner tasks: transcription and comment fetching
-    
-            print(f"[→] Transcribing {filename}")
-            _, transcript = whisper_manager.transcribe(idx, video_file)
-            post["transcript"] = transcript
-
+                print(f"[→] Transcribing {filename}")
+                _, transcript = whisper_manager.transcribe(idx, video_file)
+                post["transcript"] = transcript
+            else:
+                print(f"[→] Skipping transcription for non-video post {post['post_id']}")
+                post["transcript"] = ""
             print(f"[→] Fetching comments for {post['post_id']}")
-            post["comments"] = ss(post["post_id"], 100)
-
-         
             post["comments"] = ss(post["post_id"], 100)
 
             print(f"[✓] Done processing post {post['post_id']}")
