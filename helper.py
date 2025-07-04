@@ -119,7 +119,10 @@ def get_scraper_data(posts, scraper):
                 result["_id"]=str(result.get("post_id"))
                 augmented_posts.append(result)
                 print(f"[📥] Inserting post: {result.get('post_id')}")
-                collection.insert_one(result)
+                try:
+                    collection.insert_one(result)
+                except Exception as e:
+                    print(f"[!] Error inserting post {result.get('post_id')}: {e}")
 
     finally:
         whisper_manager.shutdown()
