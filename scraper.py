@@ -27,7 +27,7 @@ class Scraper:
         results_total = []
 
         while len(results_total) < count:
-            try:
+            # try:
                 res = self.cl.fbsearch_reels_v2(query=query, reels_max_id=reels_max_id)
                 print(f"[✓] API fetched batch with {len(res.get('reels_serp_modules', [{}])[0].get('clips', []))} items")
 
@@ -72,9 +72,9 @@ class Scraper:
                     print("[✓] No more pages available.")
                     break
 
-            except Exception as e:
-                print(f"[!] Error during scraping loop: {e}")
-                break
+            # except Exception as e:
+            #     print(f"[!] Error during scraping loop: {e}")
+            #     pass
 
         return results_total[:count]
 
