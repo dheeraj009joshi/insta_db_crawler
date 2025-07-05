@@ -2,16 +2,16 @@ import json
 import os
 from datetime import datetime
 from hikerapi import Client
-from config import token, hashtag_ig_id,hashtag
+from config import token,hashtag
 from helper import get_scraper_data
 from db import collection
 
 
-scraper=Client(token=token)
+# scraper=Client(token=token)
 
-hh=scraper.hashtag_medias_recent_v2(hashtag)
-aaa=open("hashtag.json", "w")   
-aaa.write(json.dumps(hh, indent=4)) 
+# hh=scraper.hashtag_medias_recent_v2(hashtag)
+# aaa=open("hashtag.json", "w")   
+# aaa.write(json.dumps(hh, indent=4)) 
 
 
 
@@ -43,7 +43,7 @@ class Scraper:
             try:
                 posts=[]
                 posts_raw=[]
-                data =  self.cl.hashtag_medias_recent_v2(name=hashtag,page_id=page_id)
+                data =  self.cl.hashtag_medias_top_v2(name=hashtag,page_id=page_id)
                 posts_sections =  data["response"]["sections"]
                 try:
                     posts_raw.extend(posts_sections[0]["layout_content"]["one_by_two_item"]["clips"]["items"])
