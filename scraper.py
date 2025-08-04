@@ -2,9 +2,8 @@ import json
 import os
 from datetime import datetime
 from hikerapi import Client
-from config import token,hashtag
 from helper import get_scraper_data
-from db import collection
+
 
 
 # scraper=Client(token=token)
@@ -31,9 +30,16 @@ class Scraper:
         except Exception as e:
             print(f"[!] Error fetching comments: {e}")
             return []
+    def post_by_id(self, post_id):
+        print(f"[+] Fetching post by ID: {post_id}")
+        try:
+            post = self.cl.media_by_id_v1(id=post_id)
+            return post
+        except Exception as e:
+            print(f"[!] Error fetching post: {e}")
+            return None
 
-
-    def scrape_top_hashtag_posts(self, hashtag, count):
+    def scrape_top_hashtag_posts(self, hashtag, count,collection):
         print(f"[+] Scraping top {count} posts for hashtag: '{hashtag}'")
 
         page_id = ""
@@ -78,7 +84,7 @@ class Scraper:
                     }
                  
                     posts.append(data_2)
-                get_scraper_data(posts, self)
+                get_scraper_data(posts,collection, self)
                 print(f"[→] Batch processed. Total so far: {(results_total)}")
 
 

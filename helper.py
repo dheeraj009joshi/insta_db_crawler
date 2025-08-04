@@ -6,7 +6,7 @@ import requests
 from multiprocessing import Queue, Process
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from worker.transcribe import whisper_worker
-from db import collection
+
 
 
 # ============================
@@ -65,7 +65,7 @@ def download_tiktok_video(video_url: str, output_path: str = "video.mp4"):
 # Post Processor
 # ============================
 
-def get_scraper_data(posts, scraper):
+def get_scraper_data(posts,collection, scraper):
     whisper_manager = WhisperManager()
     augmented_posts = []
     ss=scraper.scrape_post_comments
