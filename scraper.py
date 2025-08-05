@@ -25,7 +25,8 @@ class Scraper:
     def scrape_post_comments(self, post_id, count):
         print(f"[+] Scraping comments for post ID: {post_id}")
         try:
-            comments = self.cl.media_comments(id=post_id, count=count)
+            comments = self.cl.media_comments(id=str(post_id), count=count)
+            print(comments)
             return [item.get("text", "") for item in comments]
         except Exception as e:
             print(f"[!] Error fetching comments: {e}")
