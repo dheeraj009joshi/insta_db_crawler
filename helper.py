@@ -65,12 +65,27 @@ def download_tiktok_video(video_url: str, output_path: str = "video.mp4"):
 # Post Processor
 # ============================
 
-def get_scraper_data(posts,collection, scraper):
+import os
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+def get_scraper_data(posts, collection, scraper):
     whisper_manager = WhisperManager()
     augmented_posts = []
-    ss=scraper.scrape_post_comments
+    ss = scraper.scrape_post_comments
 
-    
+    def fetch_comments_with_retry(post_id, retries=3, delay=2):
+        for attempt in range(retries):
+            try:
+                comments = ss(post_id, 100)
+                if comments:  # If comments fetched successfully
+                    return comments
+                print(f"[!] No comments found on attempt {attempt+1} for {post_id}")
+            except Exception as e:
+                print(f"[!] Error fetching comments (attempt {attempt+1}) for {post_id}: {e}")
+            time.sleep(delay * (attempt + 1))  # Exponential backoff
+        return []  # Return empty list if all retries fail
+
     def process_post(post, idx):
         try:
             filename = f"{post['post_id']}.mp4"
@@ -79,23 +94,20 @@ def get_scraper_data(posts,collection, scraper):
             if not video_file:
                 print(f"[!] Skipping {post['post_id']} due to failed download.")
                 return post
-            if post["type"]==2:
-            # Inner tasks: transcription and comment fetching
+
+            if post["type"] == 2:
                 print(f"[→] Transcribing {filename}")
                 _, transcript = whisper_manager.transcribe(idx, video_file)
                 post["transcript"] = transcript
             else:
                 print(f"[→] Skipping transcription for non-video post {post['post_id']}")
                 post["transcript"] = ""
-            print(f"[→] Fetching comments for {post['post_id']}")
-            comments = ss(post["post_id"], 100)
-            print(comments)
-            if not comments:
-                print(f"[!] No comments found for {post['post_id']}")
-            else:
-                print(f"[✓] Retrieved {len(comments)} comments")
 
+            # Fetch comments with retry
+            print(f"[→] Fetching comments for {post['post_id']}")
+            comments = fetch_comments_with_retry(post["post_id"])
             post["comments"] = comments
+            print(f"[✓] Retrieved {len(comments)} comments for {post['post_id']}")
 
             print(f"[✓] Done processing post {post['post_id']}")
         except Exception as error:
@@ -112,17 +124,15 @@ def get_scraper_data(posts,collection, scraper):
     try:
         with ThreadPoolExecutor(max_workers=5) as executor:
             futures = [executor.submit(process_post, post, idx) for idx, post in enumerate(posts)]
-
             for future in as_completed(futures):
                 result = future.result()
-                result["_id"]=str(result.get("post_id"))
+                result["_id"] = str(result.get("post_id"))
                 augmented_posts.append(result)
                 print(f"[📥] Inserting post: {result.get('post_id')}")
                 try:
                     collection.insert_one(result)
                 except Exception as e:
                     print(f"[!] Error inserting post {result.get('post_id')}: {e}")
-
     finally:
         whisper_manager.shutdown()
 
