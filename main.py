@@ -1,5 +1,6 @@
 from scraper import Scraper
-from config import token, hashtags, count, db
+from config import token, hashtags, count 
+from db import db
 from concurrent.futures import ThreadPoolExecutor
 
 scraper = Scraper(token=token)
