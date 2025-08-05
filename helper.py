@@ -88,7 +88,14 @@ def get_scraper_data(posts,collection, scraper):
                 print(f"[→] Skipping transcription for non-video post {post['post_id']}")
                 post["transcript"] = ""
             print(f"[→] Fetching comments for {post['post_id']}")
-            post["comments"] = ss(post["post_id"], 100)
+            comments = ss(post["post_id"], 100)
+            print(comments)
+            if not comments:
+                print(f"[!] No comments found for {post['post_id']}")
+            else:
+                print(f"[✓] Retrieved {len(comments)} comments")
+
+            post["comments"] = comments
 
             print(f"[✓] Done processing post {post['post_id']}")
         except Exception as error:
