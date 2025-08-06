@@ -105,7 +105,7 @@ def get_scraper_data(posts, collection, scraper):
 
             # Fetch comments with retry
             print(f"[→] Fetching comments for {post['post_id']}")
-            comments = fetch_comments_with_retry(post["post_id"])
+            comments = ss(post["post_id"], 100)
             post["comments"] = comments
             print(f"[✓] Retrieved {len(comments)} comments for {post['post_id']}")
 
