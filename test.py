@@ -43,7 +43,7 @@ from scraper import Scraper
 aa=Scraper(token="0daja8wqtv3o16jpszpj582tbyduul3t")
 
 comments=aa.scrape_post_comments(
-    post_id="3691571466180023792",
+    post_id="3376532501647980689",
     count=1000
 )
 

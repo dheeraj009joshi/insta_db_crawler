@@ -7,7 +7,7 @@ scraper = Scraper(token=token)
 
 def scrape_for_hashtag(tag):
     # Create a valid MongoDB collection name
-    collection_name = f"reels_{tag.strip('#').replace(' ', '_').lower()}"
+    collection_name = f"updated_{tag.strip('#').replace(' ', '_').lower()}"
     
     # Create the collection dynamically
     collection = db[collection_name]
